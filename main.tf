@@ -137,20 +137,8 @@ resource "aws_instance" "myapp-server" {
     # Use an existing key pair for SSH access
     key_name = aws_key_pair.server-key-pair.key_name
 
-    # Provide user data to install Docker, start it, and run an Nginx container on startup
-    user_data = <<EOF
-                #!/bin/bash
-                echo "Starting user data script" >> /var/log/user-data.log
-                sudo yum update -y >> /var/log/user-data.log 2>&1
-                sudo yum install -y docker >> /var/log/user-data.log 2>&1
-                sudo systemctl enable docker >> /var/log/user-data.log 2>&1
-                sudo systemctl start docker >> /var/log/user-data.log 2>&1
-                sudo usermod -aG docker ec2-user >> /var/log/user-data.log 2>&1
-                # Stop any existing ECS agent
-                sudo docker stop $(sudo docker ps -q) >> /var/log/user-data.log 2>&1 || true
-                sudo docker run -d -p 8080:80 nginx >> /var/log/user-data.log 2>&1
-                echo "User data script completed" >> /var/log/user-data.log
-                EOF
+    # Run script to install and start the web server
+    user_data = file("entry-script.sh")
 
     tags = {
         Name: "${var.env_prefix}-server"
