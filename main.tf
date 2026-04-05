@@ -1,3 +1,12 @@
+terraform {
+    required_version = ">= 0.12"
+    backend "s3" {
+        bucket = "myapp-bucket-horace"
+        key = "myapp/state.tfstate"
+        region = "ap-southeast-1"
+    }
+}
+
 # Create VPC using a module
 module "vpc" {
     source = "terraform-aws-modules/vpc/aws"
