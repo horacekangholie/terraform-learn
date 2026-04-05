@@ -1,6 +1,7 @@
 # Create default security group and add rules
-resource "aws_default_security_group" "default-sg" {
+resource "aws_security_group" "myapp-sg" {
     vpc_id = var.vpc_id
+    name = "myapp-sg"
 
     # Allow SSH access from the specified IP
     ingress {
@@ -58,7 +59,7 @@ resource "aws_instance" "myapp-server" {
 
     # Associate the instance with the subnet and security group
     subnet_id = var.subnet_id
-    vpc_security_group_ids = [aws_default_security_group.default-sg.id]
+    vpc_security_group_ids = [aws_security_group.myapp-sg.id]
     availability_zone = var.avail_zone
 
     # Associate a public IP address to the instance
